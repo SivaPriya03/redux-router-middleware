@@ -143,7 +143,6 @@ var initialStateWithTokens = (initialState)=>{
 
 export const routing=(urls)=>{
   var urlNormalizer = normalize(urls, urlsSchema)
-  console.log(urlNormalizer);
   var urls = initialStateWithTokens(urlNormalizer.entities.urls);
   var order = urlNormalizer.result;
 
@@ -152,7 +151,6 @@ export const routing=(urls)=>{
      if(action.type == "URL_CHANGE"){
    return {
       urls:state.order.reduce((result, next)=>{
-        console.log(state.urls[next],next)
         var obj = matchPattern(state.urls[next].pattern,action.data.location.pathname);
         var match=NOT_MATCH;
         if(obj){
@@ -185,14 +183,36 @@ var location = (state={},action) => {
   }
   return state;
 }
+const historyAction = (action)=>  (location) =>{
+  return {type:"URL_CHANGE",data:{location:Object.assign({},location,{action:action})}}
+}
+
+export const push= historyAction("PUSH")
+export const replace = historyAction("REPLACE")
+
 
 export var historyMiddleWare = ( history ) => ( store )=>{
   
   store.dispatch({
     type:"URL_CHANGE",
-    from:"history",data:{location:history1.getCurrentLocation()}
+    from:"history",data:{location:history.getCurrentLocation()}
   })
   var unlisten = history.listen( ( location, action) => {
+      var search=location.search;
+      function queryStringToJSON(queryString) {
+        if(queryString.indexOf('?') > -1){
+          queryString = queryString.split('?')[1];
+        }
+        var pairs = queryString.split('&');
+        var result = {};
+        pairs.forEach(function(pair) {
+          pair = pair.split('=');
+          result[pair[0]] = decodeURIComponent(pair[1] || '');
+        });
+        return result;
+      }
+      var query = queryStringToJSON(search);
+      location.query=query;
       store.dispatch({
         type:"URL_CHANGE",
         from:"history",data:{location}
@@ -202,24 +222,20 @@ export var historyMiddleWare = ( history ) => ( store )=>{
     if(action.type=="URL_CHANGE" && action.from=="history"){
       return next(Object.assign(action,{from:null}))
     }
-    else{
+    else if(action.type=="URL_CHANGE"){
       if(action.data.location.action=="POP"){//no idea some issue there
         history.go(-1);
       }
       else{
-        console.log(action.data)
         history[action.data.location.action.toLowerCase()](action.data.location)
       }
+    }
+    else{
+      return next(action)
     }
   }
 }
 
-const historyAction = (action)=>  (location) =>{
-  return {type:"URL_CHANGE",data:{location:Object.assign({},location,{action:action})}}
-}
-
-export const push = historyAction("PUSH")
-export const replace = historyAction("REPLACE")
 
 export class RouterProvider extends React.Component{
   constructor(props) {
@@ -248,7 +264,6 @@ export class RouterProvider extends React.Component{
       },"")
     if(isDispatch){  
       if(action == "PUSH"){
-        console.log(push)
         this.props.push({
           pathname:href,
           state,
@@ -284,19 +299,69 @@ export class Link extends React.Component{
     this.onClick = this.onClick.bind(this);
   }
   onClick(e){
-    e.preventDefault();
-    var {name,params,query,state,action} = this.props;
-    this.context.action(name,params,query,state,action)
+    var { push, replace, action,pathname,state,query } = this.props;
+    if(!this.props.isReload){
+      e.preventDefault();
+       if(action == "PUSH"){
+        this.props.push({
+          pathname:pathname,
+          state,
+          query,
+        })
+      }else if(action == "REPLACE"){
+        replace({
+          pathname:pathname,
+          state,
+          query
+        })
+      }
+    }
+    //var {name,params,query,state,action} = this.props;
+    //this.context.action(name,params,query,state,action)
   }
+
   render(){
-    var { children } = this.props;
+    var { children,href,isActive,isReload=false } = this.props;
      
-    return <a href="" onClick={this.onClick} >{children}</a>
+    return <a href={href} onClick={this.onClick} className={isActive?"active":""}>{children}</a>
   }
+
 }
+Link.defaultProps= {
+  isReload:false,
+  action:"PUSH"
+}
+
 Link.contextTypes={
   action:React.PropTypes.func
 }
+Link = connect((state,props)=>{
+  var { paramMap,urls,location } = state.routing;
+  var url=urls[props.name];
+  var tokens=url.tokens;
+  var href=tokens.reduce((result,next)=>{
+    if(!next.startsWith(":"))
+    result+=next;
+    else{
+      var key=next.substring(1);
+      result+=props.params[key] || paramMap[key];
+    }
+    return result;
+  },"")
+  function jsonToQueryString(json) {
+    return '?' + 
+        Object.keys(json).map(function(key) {
+            return encodeURIComponent(key) + '=' +
+                encodeURIComponent(json[key]);
+        }).join('&');
+  }
+  var qStr=jsonToQueryString(props.query || {})
+  return {
+    pathname:href,
+    href:href+qStr,
+    isActive:href == location.pathname
+  }
+},{push,replace})(Link)
 
 export class Match extends React.Component{
   render(){
@@ -308,7 +373,7 @@ export class Match extends React.Component{
 Match = connect((state,props)=>{
    var url =state.routing.urls[props.name];
   return {
-    isMatch:  props.isExactly && url.match == 2 || url.match
+    isMatch:  (props.isExactly && url.match == 2) || (!props.isExactly && url.match)
   }
 })(Match)
 
