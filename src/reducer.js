@@ -20,7 +20,20 @@
 		  
 		}
 	}
+  [
+    {
+      name:
+
+    }
+    {
+      name:"ticketList",
+      pattern:"/zd/:portalId/tickets",
+      parent:"ticket"
+    }
+  ]
 */
+
+
 import { normalize } from 'simple-normalizr';
 import { MATCH, EXACT_MATCH, NOT_MATCH, URL_CHANGE, URL_CHANGE_BLOCK, URL_CHANGE_UNBLOCK } from './constants';
 import { urlsSchema, initialStateWithTokens, matchPattern } from './utils'
@@ -32,11 +45,9 @@ export const routing=(urls)=>{
   var order = urlNormalizer.result;
   var initialState={
     urls,
-    order,
-    location
+    order
   };
   return (state = initialState, action)=>{
-    console.log(action)
     var currentParams;
     switch(action.type){
       case URL_CHANGE:

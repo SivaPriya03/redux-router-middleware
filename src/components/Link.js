@@ -33,7 +33,7 @@ export class Link extends React.Component{
   render(){
     var { children,href,isActive,isReload=false } = this.props;
      
-    return <a href={href} onClick={this.onClick} className={isActive?"active":""}>{children}</a>
+    return React.createElement('a',{ href, onClick:this.onClick, className: isActive?"active":"" }, children)
   }
 
 }

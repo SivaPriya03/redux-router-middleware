@@ -32,6 +32,7 @@ export const historyMiddleware = ( history ) => ( store )=>{
     if(action.type==URL_CHANGE && action.from=="history"){
       if(unblock){
         unblock();
+        unblock = null;
         next({type:URL_CHANGE_UNBLOCK})
       } 
       return next(Object.assign(action,{from:null})) //from is a flag used for update url only via history api 
@@ -52,6 +53,7 @@ export const historyMiddleware = ( history ) => ( store )=>{
      else if(action.type==URL_CHANGE_UNBLOCK){
       if(unblock){
         unblock()
+        unblock = null;
       } 
       next(action);
     }
