@@ -1,1 +1,1 @@
-export count from './count'
+export {default as count} from './count'

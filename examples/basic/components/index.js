@@ -1,4 +1,4 @@
-export App from './App'
-export Home from './Home'
-export Foo from './Foo'
-export Bar from './Bar'
+export { default as App } from './App'
+export { default as Home } from './Home'
+export { default as Foo } from './Foo'
+export { default as Bar } from './Bar'

@@ -1,7 +1,6 @@
 import { URL_CHANGE, URL_CHANGE_BLOCK, URL_CHANGE_UNBLOCK } from './constants';
 
 const historyAction = (action)=>  (location) =>{
-	console.log("location",location)
 	return {
 	  	type:URL_CHANGE,
 	  	data:{

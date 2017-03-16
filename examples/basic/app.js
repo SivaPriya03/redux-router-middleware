@@ -7,26 +7,41 @@ import ReactDOM from 'react-dom'
 import { createStore, combineReducers,applyMiddleware,compose } from 'redux'
 import { Provider } from 'react-redux'
 import  { createHistory } from 'history'
-
-
-import { historyMiddleware,routing,Match,Link } from 'react-router-redux'
-import * as reducers from './reducers'
+import { Match,Link, reduxRouter } from 'react-router-redux'
+import { count } from './reducers'
 import { App, Home, Foo, Bar } from './components'
-const reducer = combineReducers({
-  ...reducers,
-  routing:routing([
+var history = createHistory();
+var historyChange = (routing,res,{getState,dispatch}) => {
+  console.log(routing)
+  dispatch({
+    type: "INCREASE",
+    amount: 1
+  })
+  if(getState().count.number>5){
+    res();
+    return;
+  }
+  setTimeout(()=>{
+    res();
+  },1000)
+}
+
+var { historyMiddleware, routing } = reduxRouter(history,[
     {name:"root",pattern:"/"},
     {name:"foo",pattern:"/foo"},
     {name:"bar",pattern:"/bar"}
-    ])
-})
+    ],historyChange);
+const reducer = combineReducers(Object.assign({
+  count,
+  routing:routing
+}))
 const DevTools = createDevTools(
   <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
     <LogMonitor theme="tomorrow" preserveScrollTop={false} />
   </DockMonitor>
 )
-var history = createHistory()
-const middleware = applyMiddleware(historyMiddleware(history))
+
+const middleware = applyMiddleware(historyMiddleware)
 const enhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(middleware)
 const store = createStore(
   reducer,
@@ -34,7 +49,6 @@ const store = createStore(
 )
 
 
-store.subscribe(()=>console.log(store.getState()));
 ReactDOM.render(
   <Provider store={store}>
     <div>

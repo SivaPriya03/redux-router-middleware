@@ -22,7 +22,7 @@ module.exports = {
 // This will make the redux-simpler-router module resolve to the
 // latest src instead of using it from npm. Remove this if running
 // outside of the source.
-var src = path.join(__dirname, '..', '..', 'src')
+var src = path.join(__dirname, '..', '..', 'lib')
 var fs = require('fs')
 if (fs.existsSync(src)) {
   // Use the latest src
