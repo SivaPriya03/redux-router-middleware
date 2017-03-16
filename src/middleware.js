@@ -15,22 +15,17 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
   var routingReducer = routing(urls)
   function historyMiddleware( history ) {
     return ( store )=>{
-      /* init dispatch*/
-      store.dispatch({
-        type:URL_CHANGE,
-        from:"history",data:{
-          location:history.getCurrentLocation ? history.getCurrentLocation() : history.location /* only works history ^3.0.0 */
-        }
-      })
-      var preUrlChangeReject=null;
-    var unlisten = history.listen( ( location, action) => {
+       var preUrlChangeReject=null;
+       var onChange=( location, action) => {
         var search=location.search;
         if(search)
         location.query=queryStringToJSON(search);
+        console.time("routing")
         var newRoutingState = routingReducer(store.getState().routing,{
           type:URL_CHANGE,
           from:"history",data:{location}
         })
+        console.timeEnd("routing")
         if(preUrlChangeReject){
           preUrlChangeReject();
           preUrlChangeReject=null;
@@ -51,7 +46,18 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           }) 
         })
         
-    })
+    }
+    /* init dispatch*/
+      onChange(history.getCurrentLocation ? history.getCurrentLocation() : history.location)
+      
+      /*store.dispatch({
+        type:URL_CHANGE,
+        from:"history",data:{
+          location:history.getCurrentLocation ? history.getCurrentLocation() : history.location // only works history ^3.0.0 
+        }
+      })*/
+     
+    var unlisten = history.listen(onChange)
     var unblock = null;
     return ( next ) => ( action ) => {
       if(action.type==URL_CHANGE && action.from=="history"){
