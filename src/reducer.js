@@ -48,7 +48,6 @@ export const routing=(urls)=>{
     order
   };
   return (state = initialState, action)=>{
-    console.log(action.type)
     var currentParams;
     switch(action.type){
       case URL_CHANGE:

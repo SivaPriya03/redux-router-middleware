@@ -110,14 +110,22 @@ export const initialStateWithTokens = (initialState)=>{
 }
 
 export function queryStringToJSON(queryString) {
-        if(queryString.indexOf('?') > -1){
-          queryString = queryString.split('?')[1];
-        }
-        var pairs = queryString.split('&');
-        var result = {};
-        pairs.forEach(function(pair) {
-          pair = pair.split('=');
-          result[pair[0]] = decodeURIComponent(pair[1] || '');
-        });
-        return result;
-      }
+  if(queryString.indexOf('?') > -1){
+    queryString = queryString.split('?')[1];
+  }
+  var pairs = queryString.split('&');
+  var result = {};
+  pairs.forEach(function(pair) {
+    pair = pair.split('=');
+    result[pair[0]] = decodeURIComponent(pair[1] || '');
+  });
+  return result;
+}
+
+export function jsonToQueryString(json) {
+       var str=Object.keys(json).map(function(key) {
+            return encodeURIComponent(key) + '=' +
+                encodeURIComponent(json[key]);
+        }).join('&');
+       return str!=""? "?"+str : str
+  }

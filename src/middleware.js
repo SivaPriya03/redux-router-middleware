@@ -8,7 +8,7 @@ two way to update state
 */
 
 import { URL_CHANGE, URL_CHANGE_BLOCK,URL_CHANGE_UNBLOCK } from './constants';
-import { queryStringToJSON } from './utils';
+import { queryStringToJSON, jsonToQueryString } from './utils';
 import {routing} from './reducer';
 
 export const reduxRouter=(history,urls,onUrlChange)=>{
@@ -18,14 +18,13 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
        var preUrlChangeReject=null;
        var onChange=( location, action) => {
         var search=location.search;
-        if(search)
-        location.query=queryStringToJSON(search);
-        console.time("routing")
+        if(search){
+          location.query=queryStringToJSON(search);
+        }
         var newRoutingState = routingReducer(store.getState().routing,{
           type:URL_CHANGE,
           from:"history",data:{location}
         })
-        console.timeEnd("routing")
         if(preUrlChangeReject){
           preUrlChangeReject();
           preUrlChangeReject=null;
@@ -48,7 +47,7 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
         
     }
     /* init dispatch*/
-      onChange(history.getCurrentLocation ? history.getCurrentLocation() : history.location)
+      setTimeout(()=>onChange(history.getCurrentLocation ? history.getCurrentLocation() : history.location),1)
       
       /*store.dispatch({
         type:URL_CHANGE,
@@ -73,7 +72,10 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           history.go(-1);
         }
         else{
-          history[action.data.location.action.toLowerCase()](action.data.location) 
+          var location=Object.assign({},action.data.location);
+          var query=location.query;
+          location.search=jsonToQueryString(location.query || {})
+          history[action.data.location.action.toLowerCase()](location) 
 
         }
       }
@@ -133,7 +135,10 @@ export const historyMiddleware = ( history ) => ( store )=>{
         history.go(-1);
       }
       else{
-        history[action.data.location.action.toLowerCase()](action.data.location) 
+        var location=Object.assign({},action.data.location);
+          var query=location.query;
+          location.search=jsonToQueryString(location.query || {})
+        history[action.data.location.action.toLowerCase()](location) 
 
       }
     }

@@ -7,7 +7,7 @@ app.use('/', express.static("public"));
 
 app.listen("9090", function (err) {
   if (err) {
-    console.log(err);
+   
     return;
   }
 });

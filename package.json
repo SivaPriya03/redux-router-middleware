@@ -1,6 +1,6 @@
 {
   "name": "redux-router-middleware",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "description": "",
   "main": "lib/index",
    "repository": {
@@ -35,5 +35,11 @@
   },
   "dependencies": {
     "simple-normalizr": "^1.0.1"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
   }
 }
