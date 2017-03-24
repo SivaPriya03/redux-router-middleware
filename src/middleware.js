@@ -38,11 +38,12 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
             type:URL_CHANGE,
             from:"history",data:{location}
           })  
-        }).catch(()=>{
+        },(e)=>{
           store.dispatch({
             type:"URL_CHANGE_Failure",
-            from:"history",data:{location}
+            from:"history",data:{location,error:e}
           }) 
+          throw e;
         })
         
     }
