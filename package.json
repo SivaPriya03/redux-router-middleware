@@ -1,6 +1,6 @@
 {
   "name": "redux-router-middleware",
-  "version": "1.0.0-beta.7",
+  "version": "1.0.0-beta.8",
   "description": "",
   "main": "lib/index",
    "repository": {
@@ -31,10 +31,7 @@
     "router"
   ],
   "devDependencies": {
-   "fz-react-cli":"0.0.3-beta.14"
-  },
-  "dependencies": {
-    "simple-normalizr": "^1.0.1"
+   "fz-react-cli":"0.0.3-beta.17"
   },
   "babel": {
     "presets": [
