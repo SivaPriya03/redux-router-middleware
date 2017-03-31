@@ -51,16 +51,20 @@ export const routing=(urls)=>{
     var currentParams;
     switch(action.type){
       case URL_CHANGE:
-         return {
+        var flag=1;
+         return {/* have to optimize code - skip all process once exact match*/
             urls:state.order.reduce((result, next)=>{
               var obj = matchPattern(state.urls[next].pattern,action.data.location.pathname);
               var match=NOT_MATCH;
               if(obj){
-                currentParams=obj;
-                if(obj.remainingPathname == ""){
-                  match=EXACT_MATCH;
+                if(flag==1){
+                  currentParams=obj;
                 }
-                else{
+                if(obj.remainingPathname == "" && flag==1){
+                  match=EXACT_MATCH;
+                  flag=0;
+                }
+                else if(flag==1){
                   match=MATCH;
                 }
               }
