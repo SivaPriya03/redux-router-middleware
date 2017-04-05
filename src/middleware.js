@@ -10,6 +10,11 @@ two way to update state
 import { URL_CHANGE, URL_CHANGE_BLOCK,URL_CHANGE_UNBLOCK } from './constants';
 import { queryStringToJSON, jsonToQueryString } from './utils';
 import {routing} from './reducer';
+const actions={
+  "push":"push",
+  "replace":"replace",
+  "goback":"goBack"
+}
 
 export const reduxRouter=(history,urls,onUrlChange)=>{
   var routingReducer = routing(urls)
@@ -76,7 +81,7 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           var location=Object.assign({},action.data.location);
           var query=location.query;
           location.search=jsonToQueryString(location.query || {})
-          history[action.data.location.action.toLowerCase()](location) 
+          history[actions[action.data.location.action.toLowerCase()]](location) 
 
         }
       }
@@ -139,7 +144,7 @@ export const historyMiddleware = ( history ) => ( store )=>{
         var location=Object.assign({},action.data.location);
           var query=location.query;
           location.search=jsonToQueryString(location.query || {})
-        history[action.data.location.action.toLowerCase()](location) 
+        history[actions[action.data.location.action.toLowerCase()]](location) 
 
       }
     }

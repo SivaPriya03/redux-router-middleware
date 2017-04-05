@@ -12,7 +12,7 @@ const historyAction = (action)=>  (location) =>{
 export const push = historyAction('push')
 export const replace = historyAction('replace')
 //export const go = historyAction('go') //not check
-//export const goBack = historyAction('goBack') //not check
+export const goBack = historyAction('goBack') 
 //export const goForward = historyAction('goForward') //not check
 export const block = (msg=null)=>({type:URL_CHANGE_BLOCK,data:{msg:msg}});
 export const unblock = () =>({type:URL_CHANGE_UNBLOCK});

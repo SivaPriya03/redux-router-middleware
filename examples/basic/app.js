@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom'
 import { createStore, combineReducers,applyMiddleware,compose } from 'redux'
 import { Provider } from 'react-redux'
 import  { createHistory } from 'history'
-import { Match,Link, reduxRouter } from 'react-router-redux'
+import { Match,Link, reduxRouter, goBack } from 'react-router-redux'
 import { count } from './reducers'
 import { App, Home, Foo, Bar } from './components'
 var history = createHistory();
@@ -60,7 +60,7 @@ ReactDOM.render(
             <Match name="foo" isExactly={true}>
               <div>
                 <Home/>
-                <Foo/>
+                <Foo goBack={()=>store.dispatch(goBack())}/>
               </div>
             </Match>
             <Match name="bar" isExactly={true}>
