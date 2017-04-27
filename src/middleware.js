@@ -47,11 +47,12 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
             type:URL_CHANGE,
             from:"history",data:{location}
           })
+          isURLChanging=false;
           storeActions.forEach((action)=>{
             store.dispatch(action);
           })
           storeActions=[];
-            isURLChanging=false;
+            
         },(e)=>{
           store.dispatch({
             type:"URL_CHANGE_Failure",
