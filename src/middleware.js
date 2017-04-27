@@ -21,7 +21,10 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
   function historyMiddleware( history ) {
     return ( store )=>{
        var preUrlChangeReject=null;
+       var isURLChanging = false;
+       var storeActions =[];
        var onChange=( location, action) => {
+        isURLChanging=true;
         var search=location.search;
         if(search){
           location.query=queryStringToJSON(search);
@@ -32,6 +35,7 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
         })
         if(preUrlChangeReject){
           preUrlChangeReject();
+          storeActions=[];
           preUrlChangeReject=null;
         }
         new Promise((res,rej)=>{
@@ -42,13 +46,18 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           store.dispatch({
             type:URL_CHANGE,
             from:"history",data:{location}
-          })  
+          })
+          storeActions.forEach((action)=>{
+            store.dispatch(action);
+          })
+          storeActions=[];
+            isURLChanging=false;
         },(e)=>{
           store.dispatch({
             type:"URL_CHANGE_Failure",
             from:"history",data:{location,error:e}
           }) 
-          throw e;
+          isURLChanging=false;
         })
         
     }
@@ -65,6 +74,7 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
     var unlisten = history.listen(onChange)
     var unblock = null;
     return ( next ) => ( action ) => {
+      
       if(action.type==URL_CHANGE && action.from=="history"){
         if(unblock){
           unblock();
@@ -95,6 +105,10 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           unblock = null;
         } 
         next(action);
+      }
+      else if(isURLChanging){
+        storeActions.push(action);
+        return action;
       }
       else{
         return next(action)
