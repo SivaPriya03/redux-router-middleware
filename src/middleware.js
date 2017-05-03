@@ -38,8 +38,11 @@ export const reduxRouter=(history,urls,onUrlChange)=>{
           storeActions=[];
           preUrlChangeReject=null;
         }
-        new Promise((res,rej)=>{
-          onUrlChange(newRoutingState,res,{dispatch:store.dispatch,getState:store.getState});
+        var p=new Promise((res,rej)=>{
+          onUrlChange(newRoutingState,()=>{
+            res();
+            return p;
+          },{dispatch:store.dispatch,getState:store.getState});
           preUrlChangeReject=rej
         }).then(()=>{
           preUrlChangeReject=null;
