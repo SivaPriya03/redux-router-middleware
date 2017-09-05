@@ -1,8 +1,10 @@
 {
   "name": "redux-router-middleware",
-  "version": "1.0.0-beta.16",
+  "version": "1.0.0-beta.17",
   "description": "",
   "main": "lib/index",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vimalceg/redux-router-middleware.git"
@@ -17,16 +19,11 @@
     "clean": "fz-react-cli clean lib coverage",
     "build:umd": "npm run clean && fz-react-cli build:component:umd",
     "build": "npm run clean && fz-react-cli build:component",
-    "prepublish": "npm run build",
+    "build:es": "fz-react-cli build:library:es",
+    "prepublish": "npm run build && npm run build:es",
     "start": "webpack public/js/ReactRouterRedux.js && node server.js",
     "example": "webpack public/js/ReactRouterRedux.js --watch"
   },
   "tags": ["react", "redux"],
-  "keywords": ["react", "redux", "router"],
-  "devDependencies": {
-    "fz-react-cli": "0.0.3-beta.31"
-  },
-  "babel": {
-    "presets": ["es2015", "react"]
-  }
+  "keywords": ["react", "redux", "router"]
 }
