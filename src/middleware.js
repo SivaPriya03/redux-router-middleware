@@ -146,13 +146,18 @@ export const reduxRouter = (history, urls, onUrlChange) => {
 
 export const historyMiddleware = history => store => {
   /* init dispatch*/
+  var location = history.getCurrentLocation
+    ? history.getCurrentLocation()
+    : history.location; /* only works history ^3.0.0 */
+
+  var search = location.search;
+  if (search) location.query = queryStringToJSON(search);
+
   store.dispatch({
     type: URL_CHANGE,
     from: 'history',
     data: {
-      location: history.getCurrentLocation
-        ? history.getCurrentLocation()
-        : history.location /* only works history ^3.0.0 */
+      location: location
     }
   });
   var unlisten = history.listen((location, action) => {

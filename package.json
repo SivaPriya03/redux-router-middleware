@@ -1,6 +1,7 @@
 {
   "name": "redux-router-middleware",
-  "version": "1.0.0-beta.17",
+  "version": "1.0.0-beta.18",
+  "umdVar": "ReactRouterRedux",
   "description": "",
   "main": "lib/index",
   "module": "es/index.js",
