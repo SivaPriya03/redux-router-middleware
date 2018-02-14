@@ -53,9 +53,13 @@ export const reduxRouter = (history, urls, onUrlChange) => {
           () => {
             preUrlChangeReject = null;
             isURLChanging = false;
-            storeActions.forEach(action => {
-              store.dispatch(action);
-            });
+            if (store.hasBatchDisaptch) {
+              store.dispatch(storeActions);
+            } else {
+              storeActions.forEach(action => {
+                store.dispatch(action);
+              });
+            }
             storeActions = [];
             store.dispatch({
               type: URL_CHANGE,

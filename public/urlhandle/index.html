@@ -97,7 +97,14 @@ const TopicContainer = connect(state => {
 var i = 0;
 function onClick() {
   // console.log(push);
-  store.dispatch(push({ pathname: `/urlhandle/topics` }));
+  store.dispatch(
+    push(
+      Object.assign(
+        {},
+        { pathname: `/urlhandle/about`, query: Object.assign({}, { a: 1 }) }
+      )
+    )
+  );
 }
 const Topics = () => (
   <div>
