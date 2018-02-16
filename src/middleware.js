@@ -16,7 +16,12 @@ const actions = {
   goback: 'goBack'
 };
 
-export const reduxRouter = (history, urls, onUrlChange) => {
+export const reduxRouter = (
+  history,
+  urls,
+  onUrlChange,
+  isBatchDispatch = false
+) => {
   var routingReducer = routing(urls);
   function historyMiddleware(history) {
     return store => {
@@ -53,7 +58,7 @@ export const reduxRouter = (history, urls, onUrlChange) => {
           () => {
             preUrlChangeReject = null;
             isURLChanging = false;
-            if (store.hasBatchDisaptch) {
+            if (isBatchDispatch) {
               store.dispatch(storeActions);
             } else {
               storeActions.forEach(action => {

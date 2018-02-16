@@ -19,6 +19,8 @@ var actions = {
 };
 
 export var reduxRouter = function reduxRouter(history, urls, onUrlChange) {
+  var isBatchDispatch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
   var routingReducer = routing(urls);
   function historyMiddleware(history) {
     return function (store) {
@@ -50,7 +52,7 @@ export var reduxRouter = function reduxRouter(history, urls, onUrlChange) {
         }).then(function () {
           preUrlChangeReject = null;
           isURLChanging = false;
-          if (store.hasBatchDisaptch) {
+          if (isBatchDispatch) {
             store.dispatch(storeActions);
           } else {
             storeActions.forEach(function (action) {
