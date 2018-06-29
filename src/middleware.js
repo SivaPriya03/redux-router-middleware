@@ -51,7 +51,11 @@ export const reduxRouter = (
               res();
               return p;
             },
-            { dispatch: store.dispatch, getState: store.getState }
+            { dispatch: store.dispatch, getState: store.getState },
+            () => {
+              rej();
+              return p;
+            }
           );
           preUrlChangeReject = rej;
         }).then(
@@ -73,12 +77,12 @@ export const reduxRouter = (
             });
           },
           e => {
+            isURLChanging = false;
             store.dispatch({
               type: 'URL_CHANGE_Failure',
               from: 'history',
               data: { location, error: e }
             });
-            isURLChanging = false;
           }
         );
       };
